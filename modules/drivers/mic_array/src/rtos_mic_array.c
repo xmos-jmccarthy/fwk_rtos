@@ -7,6 +7,7 @@
 
 #include <xcore/assert.h>
 #include <xcore/triggerable.h>
+#include <xcore/parallel.h>
 
 #include "rtos_interrupt.h"
 #include "rtos_mic_array.h"
@@ -15,6 +16,11 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #define CLRSR(c) asm volatile("clrsr %0" : : "n"(c));
+
+#include "rtos_mic_array_impl.h"
+
+DECLARE_JOB(rtos_pdm_rx_task, (void));
+DECLARE_JOB(rtos_decimator_task, (chanend_t));
 
 static void mic_array_thread(rtos_mic_array_t *ctx)
 {
@@ -30,7 +36,12 @@ static void mic_array_thread(rtos_mic_array_t *ctx)
      */
     CLRSR(XS1_SR_KEDI_MASK);
 
-    ma_vanilla_task(ctx->c_pdm_mic.end_a);
+    PAR_JOBS (
+        PJOB(rtos_pdm_rx_task, ()),
+        PJOB(rtos_decimator_task, ((chanend_t) ctx->c_pdm_mic.end_a))
+    );
+
+    // ma_vanilla_task(ctx->c_pdm_mic.end_a);
 }
 
 DEFINE_RTOS_INTERRUPT_CALLBACK(rtos_mic_array_isr, arg)
@@ -176,7 +187,7 @@ void rtos_mic_array_init(
 
     xassert(format < RTOS_MIC_ARRAY_FORMAT_COUNT);
 
-    ma_vanilla_init();
+    rtos_init();
 
     mic_array_ctx->rpc_config = NULL;
     mic_array_ctx->rx = mic_array_local_rx;

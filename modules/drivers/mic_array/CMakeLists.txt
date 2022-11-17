@@ -11,14 +11,15 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     add_library(framework_rtos_drivers_mic_array INTERFACE)
     target_sources(framework_rtos_drivers_mic_array
         INTERFACE
-            src/rtos_mic_array.c
+        src/rtos_mic_array.c
+        src/rtos_mic_array_impl.cpp
             src/rtos_mic_array_rpc.c
-            ${LIB_MIC_ARRAY_PATH}/etc/vanilla/mic_array_vanilla.cpp
+            # ${LIB_MIC_ARRAY_PATH}/etc/vanilla/mic_array_vanilla.cpp
     )
     target_include_directories(framework_rtos_drivers_mic_array
         INTERFACE
             api
-            ${LIB_MIC_ARRAY_PATH}/etc/vanilla/
+            # ${LIB_MIC_ARRAY_PATH}/etc/vanilla/
     )
     target_link_libraries(framework_rtos_drivers_mic_array
         INTERFACE

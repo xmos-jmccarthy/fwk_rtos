@@ -15,7 +15,7 @@
 #include <xcore/clock.h>
 #include <xcore/port.h>
 #include "mic_array.h"
-#include "mic_array_vanilla.h"
+// #include "mic_array_vanilla.h"
 
 #include "rtos_osal.h"
 #include "rtos_driver_rpc.h"
